@@ -1,0 +1,39 @@
+{
+  "name": "gerador-frequncia-vcs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b && npm run copy-template",
+    "start": "node ./build/index.js",
+    "dev": "node --watch ./src/index.ts",
+    "lint": "eslint ./src/**/.ts",
+    "copy-template": "npx copyfiles -u 1 src/templates/*.docx build/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemuelsousa/gerador-frequncia-vcs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lemuelsousa/gerador-frequncia-vcs/issues"
+  },
+  "homepage": "https://github.com/lemuelsousa/gerador-frequncia-vcs#readme",
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "copyfiles": "^2.4.1",
+    "eslint": "^9.26.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "docxtemplater": "^3.62.2",
+    "ejs": "^3.1.10",
+    "pizzip": "^3.2.0"
+  }
+}
