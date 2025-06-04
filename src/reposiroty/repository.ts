@@ -1,6 +1,6 @@
 import { formatDate, getDatesInMonth } from "../utils/date";
 
-const vcNames = [
+export const vcNames = [
   "lemuel de sousa pereira",
   "josé gabriel monteiro pinto",
   "PEDRO HENRIQUE TAVARES MONTEIRO",

@@ -2,8 +2,7 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import fs from "fs";
 import path from "path";
-import { fillTemplate, TemplateData } from "./service/template.service";
-import { dates } from "./reposiroty/repository";
+import { dates } from "../reposiroty/repository";
 
 const content = fs.readFileSync(
   path.resolve(__dirname, "templates/template_frequencia.docx"),
@@ -27,5 +26,20 @@ const template = fillTemplate(doc, templateData);
 
 const buf = template.toBuffer();
 
-fs.writeFileSync(path.resolve(__dirname, "output.docx"), buf);
+fs.writeFileSync(path.resolve(__dirname, `${Date.now()}.docx`), buf);
 console.log("frequencia gerada com sucesso.");
+
+export interface TemplateData {
+  month: string;
+  dates: {
+    month: string;
+    date: string;
+    weekday: string;
+  }[];
+  vc_name: string;
+}
+
+export function fillTemplate(doc: Docxtemplater, tData: TemplateData) {
+  doc.render(tData);
+  return doc;
+}
