@@ -4,15 +4,21 @@ import fs from "fs";
 import path from "path";
 import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
-import { dates } from "../reposiroty/repository";
+import { formatDate, getDatesInMonth } from "../utils/date";
 
 export const postNamesHandler = (req: Request, res: Response) => {
-  const data: string = req.body.names;
-  const names = data.split(",");
+  const data = req.body;
+  const names: string[] = data.names.split(",");
+  const [year, mon] = data.month.split("-").map(Number);
+
+  console.log(names, year, mon)
+
+  const dates = getDatesInMonth(year, mon);
+  const formatedDates = dates.map((d) => formatDate(d));
 
   const templateData: TemplateData = {
-    dates: dates,
-    month: dates[0].month.toUpperCase(),
+    dates: formatedDates,
+    month: mon.toLocaleString("pt-BR", { month: "long" }),
     vc_name: names[0].toUpperCase(),
   };
 

@@ -18,7 +18,7 @@ const doc = new Docxtemplater(zip, {
 
 const templateData: TemplateData = {
   dates: dates,
-  month: dates[0].month.toUpperCase(),
+  month: '',
   vc_name: "lemuel de sousa pereira".toUpperCase(),
 };
 
@@ -32,7 +32,6 @@ console.log("frequencia gerada com sucesso.");
 export interface TemplateData {
   month: string;
   dates: {
-    month: string;
     date: string;
     weekday: string;
   }[];

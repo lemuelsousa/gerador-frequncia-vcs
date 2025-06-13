@@ -13,7 +13,6 @@ export function getDatesInMonth(year: number, month: number) {
 
 export function formatDate(date: Date) {
   return {
-    month: date.toLocaleString(LOCALE, { month: "long" }),
     date: new Intl.DateTimeFormat(LOCALE, {
       dateStyle: "short",
     }).format(date),
