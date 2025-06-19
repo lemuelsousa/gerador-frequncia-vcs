@@ -20,7 +20,7 @@ document.getElementById("form").addEventListener("submit", async function (e) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "generated.docx";
+        a.download = `${month}.zip`;
         document.body.appendChild(a);
         a.click();
         a.remove();
