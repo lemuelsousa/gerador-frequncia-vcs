@@ -1,3 +1,7 @@
+const date = new Date();
+document.getElementById("month").value = `${date.getFullYear()}-0${
+  date.getMonth() + 1
+}`;
 document.getElementById("form").addEventListener("submit", async function (e) {
   e.preventDefault();
   const form = e.target;
