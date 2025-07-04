@@ -13,7 +13,7 @@ document.getElementById("form").addEventListener("submit", async function (e) {
   const data = { names: inputNames, month: monthValue };
 
   try {
-    fetch("https://gerador-frequncia-vcs.onrender.com", {
+    fetch("https://gerador-frequncia-vcs.onrender.com/api/names", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
