@@ -14,11 +14,11 @@ export const postNamesHandler = async (req: Request, res: Response) => {
   const [year, mon] = data.month.split("-").map(Number);
 
   // format data
-  const dates = getDatesInMonth(year, mon);
+  const dates = getDatesInMonth(year, mon-1);
   const monthName = dates[0].toLocaleString("pt-BR", { month: "long" });
   const formatedDates = dates.map((d) => formatDate(d));
 
-  // set header after validate data
+  // set headers after validate data
   res.setHeader("Content-Type", "application/zip");
   res.setHeader(
     "Content-Disposition",
