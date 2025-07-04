@@ -1,9 +1,14 @@
 import express from "express";
 import path from "path";
 import namesRoutes from "./routes/names.route";
-const app = express();
+import cors from "cors";
 
+const app = express();
 app.use(express.json());
+
+const allowedOrigin = ["https://gerador-frequncia-vcs.onrender.com"];
+
+app.use(cors({ origin: allowedOrigin }));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../views"));
