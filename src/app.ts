@@ -6,7 +6,10 @@ import cors from "cors";
 const app = express();
 app.use(express.json());
 
-const allowedOrigin = ["https://gerador-frequncia-vcs.onrender.com"];
+const allowedOrigin = [
+  "http://localhost:3000",
+  "https://gerador-frequncia-vcs.onrender.com",
+];
 
 app.use(cors({ origin: allowedOrigin }));
 

@@ -9,11 +9,17 @@ document.getElementById("form").addEventListener("submit", async function (e) {
   const inputNames = document.getElementById("names").value.trim();
   if (!inputNames) alert("por favor, insara ao menos um nome");
 
+  const pdfCheckbox = document.getElementById("pdf");
+
   const monthValue = e.target.month.value; // yyyy-mm
-  const data = { names: inputNames, month: monthValue };
+  const data = {
+    names: inputNames,
+    month: monthValue,
+    pdf: pdfCheckbox.checked,
+  };
 
   try {
-    fetch("https://gerador-frequncia-vcs.onrender.com/api/names", {
+    fetch("http://localhost:3000/api/names", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

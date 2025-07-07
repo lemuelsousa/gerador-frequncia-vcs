@@ -45,6 +45,7 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "get-stream": "^9.0.1",
+    "libreoffice-convert": "^1.6.1",
     "pizzip": "^3.2.0"
   }
 }
