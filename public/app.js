@@ -19,7 +19,7 @@ document.getElementById("form").addEventListener("submit", async function (e) {
   };
 
   try {
-    fetch("https://gerador-frequncia-vcs.onrender.com/api/names", {
+    fetch("/api/names", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
