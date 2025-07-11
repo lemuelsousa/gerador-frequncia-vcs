@@ -6,25 +6,71 @@
     <link rel="stylesheet" href="/style.css" />
     <title><%= title %></title>
   </head>
-  <body>
-    <div class="container">
-      <form id="form">
-        <label for="month">Mês</label>
-       <input required type="month" id="month" name="start" min="2024-03" value="2025-04"/>
-        <input
-          id="names"
-          type="text"
-          name="names"
-          placeholder="Insira um ou mais nomes"
-          required
-        />
-        <p>
-          separe os nomes usando vírgulas ex.: eduardo da silva costa, maria
-          castro..., ....
-        </p>
-        <label for="pdf">Exportar como PDF</label>
-        <input type="checkbox" name="pdf" id="pdf">
-        <button type="submit">Enviar</button>
+  <body class="bg-gray-50 text-gray-800">
+    <div class="w-full h-screen flex flex-col justify-center items-center px-4">
+      <h1 class="text-2xl font-bold text-gray-800 mb-1">
+        Gerador de Frequência de Voluntário Civil
+      </h1>
+      <p class="text-sm text-gray-500 mb-4">
+        Preencha os campos abaixo para gerar sua folha de frequência
+      </p>
+
+      <form
+        id="form"
+        class="w-full max-w-xl sm:max-w-lg md:max-w-xl bg-white p-6 rounded-2xl shadow-md space-y-4 border border-gray-200"
+      >
+        <div class="flex flex-col">
+          <label for="month" class="text-xl font-medium text-gray-700 mb-1"
+            >Mês</label
+          >
+          <input
+            required
+            type="month"
+            id="month"
+            name="start"
+            min="2024-03"
+            value="2025-04"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div class="flex flex-col">
+          <label for="names" class="text-xl font-medium text-gray-700 mb-1"
+            >Nomes</label
+          >
+          <input
+            id="names"
+            type="text"
+            name="names"
+            placeholder="Insira um ou mais nomes"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span class="mt-1 text-sm text-gray-500">
+            Separe os nomes usando vírgulas. Ex.: David Corenswet, Bella
+            Ramsey...
+          </span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked
+            name="pdf"
+            id="pdf"
+            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <label for="pdf" class="text-xl text-gray-700"
+            >Exportar como PDF</label
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+        >
+          Enviar
+        </button>
       </form>
     </div>
   </body>
