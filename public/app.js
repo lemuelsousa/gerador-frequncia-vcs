@@ -6,15 +6,16 @@ document.getElementById("form").addEventListener("submit", async function (e) {
   e.preventDefault();
   const form = e.target;
 
-  const inputNames = document.getElementById("names").value.trim();
-  if (!inputNames) alert("por favor, insara ao menos um nome");
+  // validate names
+  const names = document.getElementById("names").value.trim();
+  if (!names) alert("insira ao menos um nome");
 
   const pdfCheckbox = document.getElementById("pdf");
 
-  const monthValue = e.target.month.value; // yyyy-mm
+  const date = e.target.month.value; // yyyy-mm
   const data = {
-    names: inputNames,
-    month: monthValue,
+    names: names,
+    date: date,
     pdf: pdfCheckbox.checked,
   };
 
@@ -31,7 +32,7 @@ document.getElementById("form").addEventListener("submit", async function (e) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${monthValue}.zip`;
+        a.download = `${date}.zip`;
         document.body.appendChild(a);
         a.click();
         a.remove();

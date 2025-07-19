@@ -7,20 +7,15 @@ import PizZip from "pizzip";
 import { formatDate, getDatesInMonth } from "../utils/date";
 import libre from "libreoffice-convert";
 import { TemplateData } from "../utils/template";
+import { FormSchema, FormType } from "../schema/schema";
+import z from "zod/v4";
 
 const templatePath = "template_frequencia.docx";
 
 export const postNamesHandler = async (req: Request, res: Response) => {
-  const data = req.body;
-  // TODO: validate data
-  const pdf: string = data.pdf;
-  const names: string[] = data.names.split(",");
-  const [year, mon] = data.month.split("-").map(Number);
+  const result = FormSchema.safeParse(req.body);
 
-  // format data
-  const dates = getDatesInMonth(year, mon - 1);
-  const monthName = dates[0].toLocaleString("pt-BR", { month: "long" });
-  const formatedDates = dates.map((d) => formatDate(d));
+  if (!result.success) throw result.error;
 
   res.setHeader("Content-Type", "application/zip");
   res.setHeader(
@@ -28,6 +23,16 @@ export const postNamesHandler = async (req: Request, res: Response) => {
     `'attachment; filename="documents.zip"'`
   );
 
+  const data: FormType = result.data;
+
+  //get the days of the month
+  const dates = getDatesInMonth(data.date.year, data.date.month - 1);
+  // format the month name
+  const monthName = dates[0].toLocaleString("pt-BR", { month: "long" });
+  //format dates
+  const formatedDates = dates.map((d) => formatDate(d));
+
+  //
   const content = fs.readFileSync(
     path.resolve(
       __dirname,
@@ -42,7 +47,7 @@ export const postNamesHandler = async (req: Request, res: Response) => {
   archive.pipe(res);
 
   // prepare tasks
-  const tasks = names.map((name) => {
+  const tasks = data.names.map((name) => {
     return new Promise<void>((resolve, reject) => {
       const zip = new PizZip(content);
 
@@ -61,7 +66,7 @@ export const postNamesHandler = async (req: Request, res: Response) => {
 
       const docxBuffer = doc.toBuffer();
 
-      if (pdf) {
+      if (data.pdf) {
         libre.convert(docxBuffer, ".pdf", undefined, (err, pdfBuffer) => {
           if (err) {
             console.log("Conversion error: ", err);
@@ -81,7 +86,16 @@ export const postNamesHandler = async (req: Request, res: Response) => {
     await Promise.all(tasks);
     await archive.finalize();
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error generating files.");
+    if (err instanceof z.ZodError) {
+      res.status(400).json({
+        errors: err.issues.map((iss) => ({
+          field: iss.path.join("."),
+          message: iss.message,
+        })),
+      });
+    }
+    res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
