@@ -49,6 +49,7 @@
     "get-stream": "^9.0.1",
     "libreoffice-convert": "^1.6.1",
     "pizzip": "^3.2.0",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "zod": "^3.25.76"
   }
 }

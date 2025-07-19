@@ -6,15 +6,16 @@ document.getElementById("form").addEventListener("submit", async function (e) {
   e.preventDefault();
   const form = e.target;
 
-  const inputNames = document.getElementById("names").value.trim();
-  if (!inputNames) alert("por favor, insara ao menos um nome");
+  // validate names
+  const namesInput = document.getElementById("names");
+  if (!namesInput) alert("insira ao menos um nome");
 
   const pdfCheckbox = document.getElementById("pdf");
 
-  const monthValue = e.target.month.value; // yyyy-mm
+  const date = e.target.month.value; // yyyy-mm
   const data = {
-    names: inputNames,
-    month: monthValue,
+    names: namesInput.value.trim(),
+    date: date,
     pdf: pdfCheckbox.checked,
   };
 
@@ -31,13 +32,13 @@ document.getElementById("form").addEventListener("submit", async function (e) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${monthValue}.zip`;
+        a.download = `${date}.zip`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
       });
-    form.reset();
+      namesInput.value = "";
   } catch (error) {
     console.error("There was a problem: " + error.message);
   }
