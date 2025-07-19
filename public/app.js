@@ -7,14 +7,14 @@ document.getElementById("form").addEventListener("submit", async function (e) {
   const form = e.target;
 
   // validate names
-  const names = document.getElementById("names").value.trim();
-  if (!names) alert("insira ao menos um nome");
+  const namesInput = document.getElementById("names");
+  if (!namesInput) alert("insira ao menos um nome");
 
   const pdfCheckbox = document.getElementById("pdf");
 
   const date = e.target.month.value; // yyyy-mm
   const data = {
-    names: names,
+    names: namesInput.value.trim(),
     date: date,
     pdf: pdfCheckbox.checked,
   };
@@ -38,7 +38,7 @@ document.getElementById("form").addEventListener("submit", async function (e) {
         a.remove();
         window.URL.revokeObjectURL(url);
       });
-    form.reset();
+      namesInput.value = "";
   } catch (error) {
     console.error("There was a problem: " + error.message);
   }

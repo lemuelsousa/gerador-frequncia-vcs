@@ -32,7 +32,6 @@ export const postNamesHandler = async (req: Request, res: Response) => {
   //format dates
   const formatedDates = dates.map((d) => formatDate(d));
 
-  //
   const content = fs.readFileSync(
     path.resolve(
       __dirname,

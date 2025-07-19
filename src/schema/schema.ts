@@ -33,11 +33,10 @@ const FormSchema = z.object({
     })
     .refine(
       (names) => {
+        // separete validations with own messages
         return names.every(
           (name) =>
-            name.length >= 2 &&
-            name.length <= 100 &&
-            /^[\p{L}\s]+$/u.test(name) // test if constains only letters and spaces
+            name.length >= 2 && name.length <= 100 && /^[\p{L}\s]+$/u.test(name) // test if constains only letters and spaces
         );
       },
       {
