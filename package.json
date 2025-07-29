@@ -8,7 +8,7 @@
     "start": "node ./build/app.js",
     "build": "npm run css:build && tsc -b && npm run copy-template",
     "css:build": "npx @tailwindcss/cli -i public/input.css -o public/style.css",
-    "css:dev": "npx @tailwindcss/cli -i public/input.css -o public/style.css --watch",
+    "css:dev": "npx @tailwindcss/cli -i public/css/input.css -o public/css/style.css --watch",
     "clean": "rm -r ./build",
     "lint": "eslint ./src/**/.ts",
     "copy-template": "npx copyfiles -u 1 src/templates/*.docx build/"
