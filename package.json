@@ -10,7 +10,7 @@
     "css:build": "npx @tailwindcss/cli -i public/css/input.css -o public/css/style.css",
     "css:dev": "npx @tailwindcss/cli -i public/css/input.css -o public/css/style.css --watch",
     "clean": "rm -r ./build",
-    "lint": "eslint ./src/**/.ts",
+    "lint": "eslint ./src/**/*.ts",
     "copy-template": "npx copyfiles -u 1 src/templates/*.docx build/"
   },
   "repository": {
