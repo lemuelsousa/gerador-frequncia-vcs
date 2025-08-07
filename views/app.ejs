@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
     <title><%= title %></title>
   </head>
   <body class="bg-gray-50 text-gray-800">
@@ -35,21 +35,15 @@
         </div>
 
         <div class="flex flex-col">
-          <label for="names" class="text-xl font-medium text-gray-700 mb-1"
-            >Nomes</label
+          <div id="inputNameContainer" class="flex flex-col gap-2"></div>
+          <button
+            title="Criar campo de nome"
+            type="button"
+            id="addNameBtn"
+            class="mx-auto my-6 text-white w-16 h-10 rounded-md font-bold text-2xl cursor-pointer bg-blue-500 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 flex justify-center items-center shadow-md active:bg-blue-800 active:translate-y-0"
           >
-          <input
-            id="names"
-            type="text"
-            name="names"
-            placeholder="Insira um ou mais nomes"
-            required
-            class="w-full rounded-md border border-gray-300 px-3 py-2 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <span class="mt-1 text-sm text-gray-500">
-            Separe os nomes usando vírgulas. Ex.: David Corenswet, Bella
-            Ramsey...
-          </span>
+            +
+          </button>
         </div>
 
         <div class="flex items-center space-x-2">
@@ -66,6 +60,7 @@
         </div>
 
         <button
+          title="enviar formulário"
           type="submit"
           class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
         >
@@ -74,5 +69,5 @@
       </form>
     </div>
   </body>
-  <script src="./app.js"></script>
+  <script type="module" src="./js/main.js"></script>
 </html>

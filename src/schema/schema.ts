@@ -23,36 +23,26 @@ const FormSchema = z.object({
       message: "mês deve ser entre 01 (janeiro) e 12 (dezembro)",
     }),
   names: z
-    .string()
-    .min(1, "o campo nome não pode ser vazio")
-    .transform((str) => {
-      return str
-        .split(",")
-        .map((name) => name.trim())
-        .filter((name) => name.length > 0);
-    })
-    .refine(
-      (names) => {
-        // separete validations with own messages
-        return names.every(
-          (name) =>
-            name.length >= 2 && name.length <= 100 && /^[\p{L}\s]+$/u.test(name) // test if constains only letters and spaces
-        );
-      },
-      {
-        message:
-          "cada nome deve ter entre 02 a 100 caracteres e conter apenas letras e espaçamentos",
-      }
+    .array(
+      z
+        .string()
+        .trim()
+        .min(2, "o nome deve conter no mínimo dois caracteres")
+        .max(100, "o nome deve conter no máximo cem caracteres")
+        .refine((name) => /^[\p{L}\s]+$/u.test(name), {
+          message: "o nome deve conter apenas letras e espaçamentos",
+        })
+        .refine(
+          (name) => {
+            return name.split(" ").length >= 2;
+          },
+          {
+            message: "o nome deve ser composto",
+          }
+        )
     )
-    .refine(
-      (names) => {
-        const normalized = names.map((name) => name.toLowerCase().trim());
-        return new Set(normalized).size === normalized.length;
-      },
-      {
-        message: "não é possível ter nomes duplicados",
-      }
-    ),
+    .min(1, "1 nome é o número mínimo")
+    .max(10, "10 nomes é o número máximo"),
   pdf: z.boolean(),
 });
 
