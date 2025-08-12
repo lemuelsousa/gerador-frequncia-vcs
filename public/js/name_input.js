@@ -56,8 +56,9 @@ export function setupNameInput({ isRemovable, parent }) {
 
   const errorDiv = document.createElement("div");
   errorDiv.id = `${id}--error`;
-  errorDiv.className = "error-message text-red-500 text-sm";
-  parent.appendChild(errorDiv);
+  errorDiv.className = "error-message text-red-500 text-sm w-full pt-2 pl-2";
+  parent. appendChild(errorDiv);
+
 
   const validator = new FieldValidator(id, nameValidationRules);
   validator.setupEventListeners();
@@ -149,5 +150,11 @@ class FieldValidator {
     this.filed.classList.add("valid");
     this.filed.classList.remove("invalid");
     this.isValid = true;
+    
+    setTimeout(() => {
+      if (this.isValid) {
+        this.errorDiv.textContent = "";
+      }
+    }, 2000);
   }
 } 
