@@ -8,7 +8,7 @@ app.use(express.json());
 
 const allowedOrigin = [
   "http://localhost:3000",
-  "https://gerador-frequncia-vcs.onrender.com",
+  "https://freqvcpmpa.fly.dev",
 ];
 
 app.use(cors({ origin: allowedOrigin }));
