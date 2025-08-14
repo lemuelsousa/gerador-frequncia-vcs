@@ -12,7 +12,7 @@ import { TemplateData } from "../utils/template";
 
 const templatePath = "template_frequencia.docx";
 
-export const postNamesHandler = async (req: Request, res: Response) => {
+export const docsCreationHandler = async (req: Request, res: Response) => {
   try {
     const result = FormSchema.safeParse(req.body);
 
@@ -45,6 +45,7 @@ export const postNamesHandler = async (req: Request, res: Response) => {
 
     // prepare zip
     const archive = archiver("zip", { zlib: { level: 9 } });
+    
     archive.on("error", (err) =>
       res.status(500).send({ message: err.message })
     );
