@@ -16,19 +16,21 @@ export function createNameInput({ isRemovable }) {
 
 function setupNameIputWrapper(parent) {
   const wrapper = document.createElement("div");
-  wrapper.className = "flex justify-between items-center flex-wrap";
+  wrapper.className = "flex justify-between items-center flex-wrap"; 
   parent.appendChild(wrapper);
   return wrapper;
 }
 
 export function setupNameInput({ isRemovable, parent }) {
   const id = `${NAME_ID_PATTERN}${MAX_NAMES - (MAX_NAMES - allNameInputs.length)}`;
+
   const newInput = document.createElement("input");
   newInput.type = "text";
   newInput.placeholder = "Insira o nome completo do voluntário";
   newInput.required = true;
   newInput.className =
     "w-md rounded-md border border-gray-300 px-3 py-2 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500";
+
   newInput.id = id;
   newInput.minLength = "2";
   newInput.maxLength = "100";
@@ -59,7 +61,6 @@ export function setupNameInput({ isRemovable, parent }) {
   errorDiv.className = "error-message text-red-500 text-sm w-full pt-2 pl-2";
   parent. appendChild(errorDiv);
 
-
   const validator = new FieldValidator(id, nameValidationRules);
   validator.setupEventListeners();
 
@@ -68,7 +69,6 @@ export function setupNameInput({ isRemovable, parent }) {
 }
 
 addNameBtn.addEventListener("click", () => {
-  
   if (document.getElementsByClassName("invalid").length > 0) {
     alert("Por favor, corrija os campos inválidos antes de adicionar mais um nome");
     return;
@@ -81,6 +81,7 @@ addNameBtn.addEventListener("click", () => {
 
   createNameInput({ isRemovable: true });
 });
+
 
 export function getAllNames() {
   return allNameInputs.map((name) => name.value);
@@ -157,4 +158,4 @@ class FieldValidator {
       }
     }, 2000);
   }
-} 
+}
