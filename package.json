@@ -7,7 +7,7 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
     "start": "node ./build/app.js",
     "build": "npm run css:build && tsc -b && npm run copy-template",
-    "css:build": "npx @tailwindcss/cli -i public/input.css -o public/style.css",
+    "css:build": "npx @tailwindcss/cli -i public/css/input.css -o public/css/style.css",
     "css:dev": "npx @tailwindcss/cli -i public/css/input.css -o public/css/style.css --watch",
     "clean": "rm -r ./build",
     "lint": "eslint ./src/**/.ts",
