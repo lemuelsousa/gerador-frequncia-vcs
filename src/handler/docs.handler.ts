@@ -8,8 +8,9 @@ import PizZip from "pizzip";
 import z from "zod/v4";
 import { FormSchema, FormType } from "../schema/schema";
 import { formatDate, getDatesInMonth } from "../utils/date";
-import { TemplateData } from "../utils/template";
 import pLimit from "p-limit";
+import { logger } from "../utils/logger";
+import { generateRequestId } from "../utils/request";
 
 function getTemplateAbsPath() {
   return path.resolve(__dirname, "../templates", "template_frequencia.docx");
@@ -26,14 +27,27 @@ function getStaticPrefilledBuffer(
   const abs = getTemplateAbsPath();
   const { mtimeMs } = fs.statSync(abs);
   const cached = staticBufferCache.get(key);
-  if (cached && cached.mtimeMs === mtimeMs) return cached.buf;
+  if (cached && cached.mtimeMs === mtimeMs) {
+    logger.debug("Using cached template buffer", { key, month });
+    return cached.buf;
+  }
 
+  logger.info("Regenerating template buffer", {
+    key,
+    month,
+    templatePath: abs,
+  });
   const content = fs.readFileSync(abs, "binary");
   const zip = new PizZip(content);
   const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
   doc.render({ month, dates, vc_name: "{vc_name}" });
   const buf = doc.toBuffer();
   staticBufferCache.set(key, { mtimeMs, buf });
+  logger.debug("Template buffer cached", {
+    key,
+    month,
+    bufferSize: buf.length,
+  });
   return buf;
 }
 
@@ -47,6 +61,15 @@ const convertToPdf = (input: Buffer) =>
   });
 
 export const docsCreationHandler = async (req: Request, res: Response) => {
+  const requestId = generateRequestId();
+  logger.info("Document generation started", {
+    requestId,
+    namesCount: req.body.names?.length,
+    month: req.body.date?.month,
+    year: req.body.date?.year,
+    outputFormat: req.body.pdf ? "PDF" : "DOCX",
+  });
+
   try {
     const result = FormSchema.safeParse(req.body);
 
@@ -87,6 +110,7 @@ export const docsCreationHandler = async (req: Request, res: Response) => {
     // prepare tasks
     const tasks = data.names.map((name) =>
       limit(async () => {
+        const startTime = Date.now();
         const zipPerName = new PizZip(prefilledBuffer);
         const docPerName = new Docxtemplater(zipPerName, {
           paragraphLoop: true,
@@ -102,12 +126,28 @@ export const docsCreationHandler = async (req: Request, res: Response) => {
         } else {
           archive.append(docxBuffer, { name: `${docName}.docx` });
         }
+        logger.debug("Document generated successfully", {
+          name,
+          duration: Date.now() - startTime,
+          format: data.pdf ? "PDF" : "DOCX",
+        });
       })
     );
 
     await Promise.all(tasks);
     await archive.finalize();
+    logger.info("Document generation completed", {
+      requestId,
+      documentsGenerated: data.names.length,
+      archiveSize: archive.pointer(), // if available
+    });
   } catch (err) {
+    const error = err as Error;
+    logger.error("Document generation failed", {
+      requestId,
+      error: error.message,
+      stack: error.stack,
+    });
     if (err instanceof z.ZodError) {
       console.warn(err);
       res.status(400).json({
