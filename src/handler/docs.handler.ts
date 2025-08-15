@@ -9,8 +9,42 @@ import z from "zod/v4";
 import { FormSchema, FormType } from "../schema/schema";
 import { formatDate, getDatesInMonth } from "../utils/date";
 import { TemplateData } from "../utils/template";
+import pLimit from "p-limit";
 
-const templatePath = "template_frequencia.docx";
+function getTemplateAbsPath() {
+  return path.resolve(__dirname, "../templates", "template_frequencia.docx");
+}
+
+type CacheKey = string; // e.g. `${templateAbsPath}:${year}-${month}`
+const staticBufferCache = new Map<CacheKey, { mtimeMs: number; buf: Buffer }>();
+
+function getStaticPrefilledBuffer(
+  key: CacheKey,
+  month: string,
+  dates: ReturnType<typeof formatDate>[]
+) {
+  const abs = getTemplateAbsPath();
+  const { mtimeMs } = fs.statSync(abs);
+  const cached = staticBufferCache.get(key);
+  if (cached && cached.mtimeMs === mtimeMs) return cached.buf;
+
+  const content = fs.readFileSync(abs, "binary");
+  const zip = new PizZip(content);
+  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+  doc.render({ month, dates, vc_name: "{vc_name}" });
+  const buf = doc.toBuffer();
+  staticBufferCache.set(key, { mtimeMs, buf });
+  return buf;
+}
+
+const limit = pLimit(3);
+
+const convertToPdf = (input: Buffer) =>
+  new Promise<Buffer>((resolve, reject) => {
+    libre.convert(input, ".pdf", undefined, (err, buf) =>
+      err ? reject(err) : resolve(buf)
+    );
+  });
 
 export const docsCreationHandler = async (req: Request, res: Response) => {
   try {
@@ -23,24 +57,24 @@ export const docsCreationHandler = async (req: Request, res: Response) => {
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `'attachment; filename="documents.zip"'`
+      'attachment; filename="documents.zip"'
     );
 
     const data: FormType = result.data;
 
-    //get the days of the month
     const dates = getDatesInMonth(data.date.year, data.date.month - 1);
-    // format the month name
-    const monthName = dates[0].toLocaleString("pt-BR", { month: "long" });
-    //format dates
-    const formatedDates = dates.map((d) => formatDate(d));
+    const monthName = dates[0]
+      .toLocaleString("pt-BR", { month: "long" })
+      .toUpperCase();
+    const formatedDates = dates.map(formatDate);
 
-    const content = fs.readFileSync(
-      path.resolve(
-        __dirname,
-        path.join(__dirname, `../templates/${templatePath}`)
-      ),
-      "binary"
+    const cacheKey = `${getTemplateAbsPath()}:${data.date.year}-${
+      data.date.month
+    }`;
+    const prefilledBuffer = getStaticPrefilledBuffer(
+      cacheKey,
+      monthName,
+      formatedDates
     );
 
     // prepare zip stream
@@ -50,50 +84,26 @@ export const docsCreationHandler = async (req: Request, res: Response) => {
     );
     archive.pipe(res);
 
-    const zipStatic = new PizZip(content);
-    const docStatic = new Docxtemplater(zipStatic, {
-      paragraphLoop: true,
-      linebreaks: true,
-    });
-
-    const staticTemplateData: TemplateData = {
-      dates: formatedDates,
-      month: monthName.toUpperCase(),
-      vc_name: "{vc_name}",
-    };
-
-    docStatic.render(staticTemplateData);
-    const prefilledBuffer = docStatic.toBuffer();
-
     // prepare tasks
-    const tasks = data.names.map((name) => {
-      return new Promise<void>((resolve, reject) => {
+    const tasks = data.names.map((name) =>
+      limit(async () => {
         const zipPerName = new PizZip(prefilledBuffer);
         const docPerName = new Docxtemplater(zipPerName, {
           paragraphLoop: true,
           linebreaks: true,
         });
-
         docPerName.render({ vc_name: name.toUpperCase() });
-
         const docxBuffer = docPerName.toBuffer();
-        const docName = name.replace(" ", "_");
+        const docName = name.replaceAll(" ", "_");
 
         if (data.pdf) {
-          libre.convert(docxBuffer, ".pdf", undefined, (err, pdfBuffer) => {
-            if (err) {
-              console.log("Conversion error: ", err);
-              return reject(err);
-            }
-            archive.append(pdfBuffer, { name: `${docName}.pdf` });
-            resolve();
-          });
+          const pdfBuffer = await convertToPdf(docxBuffer);
+          archive.append(pdfBuffer, { name: `${docName}.pdf` });
         } else {
           archive.append(docxBuffer, { name: `${docName}.docx` });
-          resolve();
         }
-      });
-    });
+      })
+    );
 
     await Promise.all(tasks);
     await archive.finalize();
