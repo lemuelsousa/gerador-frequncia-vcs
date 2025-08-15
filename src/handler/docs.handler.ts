@@ -1,7 +1,7 @@
 import archiver from "archiver";
 import Docxtemplater from "docxtemplater";
 import { Request, Response } from "express";
-import fs from "fs";
+import fs, { stat } from "fs";
 import libre from "libreoffice-convert";
 import path from "path";
 import PizZip from "pizzip";
@@ -43,33 +43,41 @@ export const docsCreationHandler = async (req: Request, res: Response) => {
       "binary"
     );
 
-    // prepare zip
+    // prepare zip stream
     const archive = archiver("zip", { zlib: { level: 9 } });
-    
     archive.on("error", (err) =>
       res.status(500).send({ message: err.message })
     );
     archive.pipe(res);
 
+    const zipStatic = new PizZip(content);
+    const docStatic = new Docxtemplater(zipStatic, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    const staticTemplateData: TemplateData = {
+      dates: formatedDates,
+      month: monthName.toUpperCase(),
+      vc_name: "{vc_name}",
+    };
+
+    docStatic.render(staticTemplateData);
+    const prefilledBuffer = docStatic.toBuffer();
+
     // prepare tasks
     const tasks = data.names.map((name) => {
       return new Promise<void>((resolve, reject) => {
-        const zip = new PizZip(content);
-
-        const templateData: TemplateData = {
-          dates: formatedDates,
-          month: monthName.toUpperCase(),
-          vc_name: name.toUpperCase(),
-        };
-
-        const doc = new Docxtemplater(zip, {
+        const zipPerName = new PizZip(prefilledBuffer);
+        const docPerName = new Docxtemplater(zipPerName, {
           paragraphLoop: true,
           linebreaks: true,
         });
 
-        doc.render(templateData);
+        docPerName.render({ vc_name: name.toUpperCase() });
 
-        const docxBuffer = doc.toBuffer();
+        const docxBuffer = docPerName.toBuffer();
+        const docName = name.replace(" ", "_");
 
         if (data.pdf) {
           libre.convert(docxBuffer, ".pdf", undefined, (err, pdfBuffer) => {
@@ -77,11 +85,11 @@ export const docsCreationHandler = async (req: Request, res: Response) => {
               console.log("Conversion error: ", err);
               return reject(err);
             }
-            archive.append(pdfBuffer, { name: `${name}.pdf` });
+            archive.append(pdfBuffer, { name: `${docName}.pdf` });
             resolve();
           });
         } else {
-          archive.append(docxBuffer, { name: `${name}.docx` });
+          archive.append(docxBuffer, { name: `${docName}.docx` });
           resolve();
         }
       });
