@@ -51,7 +51,7 @@ function getStaticPrefilledBuffer(
   return buf;
 }
 
-const limit = pLimit(3);
+const limit = pLimit(1);
 
 const convertToPdf = (input: Buffer) =>
   new Promise<Buffer>((resolve, reject) => {
