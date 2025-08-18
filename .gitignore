@@ -137,4 +137,4 @@ build
 .pnp.*
 
 #css
-.public/css/style.css
+public/css/style.css
