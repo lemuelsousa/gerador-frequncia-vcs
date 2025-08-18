@@ -14,23 +14,21 @@ export function createNameInput({ isRemovable }) {
   setupNameInput({ parent: wrapper, isRemovable });
 }
 
-function setupNameIputWrapper(parent) {
+function createFieldWrapper() {
   const wrapper = document.createElement("div");
-  wrapper.className = "flex justify-between items-center flex-wrap"; 
+  wrapper.className = "flex justify-between items-center flex-wrap";
   parent.appendChild(wrapper);
   return wrapper;
 }
 
 export function setupNameInput({ isRemovable, parent }) {
   const id = `${NAME_ID_PATTERN}${MAX_NAMES - (MAX_NAMES - allNameInputs.length)}`;
-
   const newInput = document.createElement("input");
   newInput.type = "text";
   newInput.placeholder = "Insira o nome completo do voluntário";
   newInput.required = true;
   newInput.className =
     "w-md rounded-md border border-gray-300 px-3 py-2 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500";
-
   newInput.id = id;
   newInput.minLength = "2";
   newInput.maxLength = "100";
@@ -38,28 +36,15 @@ export function setupNameInput({ isRemovable, parent }) {
   parent.appendChild(newInput);
 
   if (isRemovable) {
-    const removeBtn = document.createElement("button");
-    removeBtn.innerHTML = "x";
-    removeBtn.title = "remover campo";
-    removeBtn.className =
-      "text-red-500 w-10 h-8 rounded-md text-sm cursor-pointer hover:shadow-lg hover:border-red-400 hover:border hover:-translate-0.5 flex justify-center items-center shadow-md active:bg-red-800";
-    removeBtn.type = "button";
-
-    removeBtn.addEventListener("click", () => {
-      const index = allNameInputs.indexOf(newInput);
-      if (index > -1) {
-        allNameInputs.splice(index, 1);
-        console.log(`inputs length updated: ${allNameInputs.length}`);
-      }
-      parent.remove();
-    });
-    parent.appendChild(removeBtn);
+    const removeBtn = createRemoveButton(() => wrapper.remove());
+    wrapper.appendChild(removeBtn);
   }
 
   const errorDiv = document.createElement("div");
   errorDiv.id = `${id}--error`;
   errorDiv.className = "error-message text-red-500 text-sm w-full pt-2 pl-2";
   parent. appendChild(errorDiv);
+
 
   const validator = new FieldValidator(id, nameValidationRules);
   validator.setupEventListeners();
@@ -69,6 +54,7 @@ export function setupNameInput({ isRemovable, parent }) {
 }
 
 addNameBtn.addEventListener("click", () => {
+  
   if (document.getElementsByClassName("invalid").length > 0) {
     alert("Por favor, corrija os campos inválidos antes de adicionar mais um nome");
     return;
@@ -81,7 +67,6 @@ addNameBtn.addEventListener("click", () => {
 
   createNameInput({ isRemovable: true });
 });
-
 
 export function getAllNames() {
   return allNameInputs.map((name) => name.value);
@@ -158,4 +143,4 @@ class FieldValidator {
       }
     }, 2000);
   }
-}
+} 

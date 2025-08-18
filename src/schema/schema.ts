@@ -16,7 +16,7 @@ const FormSchema = z.object({
         month: parseInt(month),
       };
     })
-    .refine((date) => date.year >= 2015 && date.year >= currentYear, {
+    .refine((date) => date.year >= 2015 && date.year <= currentYear, {
       message: "o ano deve ser algum dentre 2015 e " + currentYear,
     })
     .refine((date) => date.month >= 1 && date.month <= 12, {
