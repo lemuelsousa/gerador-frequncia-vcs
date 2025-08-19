@@ -3,6 +3,6 @@ import { docsCreationHandler } from "../handler/docs.handler";
 
 const router = Router();
 
-router.post("/names", docsCreationHandler);
+router.post("/docs", docsCreationHandler);
 
 export default router;
