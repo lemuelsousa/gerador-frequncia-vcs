@@ -137,13 +137,13 @@ A aplicação está em produção utilizando o serviço de deploy **Fly.io**.
 
 `npm run buil` – build de produção
 
-`npm star` – roda em produção
+`npm start` – roda em produção
 
 `npm run css:buil` – exporta CSS para produção
 
 `npm run css:dev` – Tailwind CSS em modo desenvolvimento
 
-`npm run lin` – executa ESLint
+`npm run lint` – executa ESLint
 
 `npm run clean` – limpa arquivos de build
 
