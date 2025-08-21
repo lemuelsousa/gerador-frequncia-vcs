@@ -183,8 +183,6 @@ gerador-frequncia-vcs/
 
 🗂️ Armazenamento de registros anteriores – manter histórico de documentos
 
-⏳ Tela de loading durante o processamento – feedback visual para o usuário enquanto os arquivos são gerados
-
 ## Contribuindo
 
 1. Faça um fork do projeto
