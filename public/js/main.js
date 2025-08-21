@@ -10,9 +10,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const monthInput = document.getElementById("month");
   monthInput.value = formatedDate;
 
-  document
-    .getElementById("form")
-    .addEventListener("submit", async function (e) {
+  const overlay = document.getElementById("loadingOverlay");
+  const form = document.getElementById("form");
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  function showLoading() {
+    if (!overlay) return;
+    overlay.classList.remove("hidden");
+    overlay.classList.add("flex");
+  }
+
+  function hideLoading() {
+    if (!overlay) return;
+    overlay.classList.add("hidden");
+    overlay.classList.remove("flex");
+  }
+
+  form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const date = e.target.month.value;
@@ -23,7 +37,22 @@ document.addEventListener("DOMContentLoaded", () => {
         pdf: document.getElementById("pdf").checked,
       };
 
-      await submit(data);
-      location.reload();
+      try {
+        showLoading();
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+        }
+        await submit(data);
+      } finally {
+        // Reload regardless of success; server errors are alerted in submit()
+        location.reload();
+        // In case reload is blocked or delayed, revert UI state
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+        hideLoading();
+      }
     });
 });
