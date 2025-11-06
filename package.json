@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node --files src/app.ts",
     "start": "node ./build/app.js",
     "build": "npm run css:build && tsc -b && npm run copy-template",
     "css:build": "npx @tailwindcss/cli -i public/css/input.css -o public/css/style.css",
@@ -29,6 +29,8 @@
     "@types/archiver": "^6.0.3",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
+    "@types/express-session": "^1.18.2",
+    "@types/ioredis": "^4.28.10",
     "@types/node": "^22.15.18",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
@@ -40,18 +42,25 @@
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.11",
+    "@types/gapi": "^0.0.47",
     "@types/get-stream": "^3.0.1",
     "archiver": "^7.0.1",
     "cors": "^2.8.5",
     "docxtemplater": "^3.62.2",
+    "dotenv": "^17.2.2",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "get-stream": "^9.0.1",
+    "googleapis": "^159.0.0",
     "libreoffice-convert": "^1.6.1",
     "p-limit": "^2.3.0",
     "pizzip": "^3.2.0",
     "tailwindcss": "^4.1.11",
     "winston": "^3.17.0",
     "zod": "^3.25.76"
+  },
+  "ts-node": {
+    "files": true
   }
 }
